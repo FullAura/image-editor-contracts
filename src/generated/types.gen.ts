@@ -636,6 +636,60 @@ export type PhoneLookupResponse = {
     } | null;
 };
 
+export type TestScrapeRequest = {
+    phone: string;
+};
+
+export type TestScrapeOwnerSource = {
+    url: string;
+    /**
+     * Quote from the page linking the owner to the number.
+     */
+    evidence: string;
+};
+
+export type TestScrapeOwner = {
+    name: string;
+    type: 'person' | 'business';
+    location: string | null;
+    /**
+     * Highest confidence any page gave.
+     */
+    confidence: 'high' | 'medium' | 'low';
+    /**
+     * Possible postal addresses.
+     */
+    addresses: Array<string>;
+    /**
+     * Possible email addresses.
+     */
+    emails: Array<string>;
+    /**
+     * Possible relatives / household members (names).
+     */
+    relatives: Array<string>;
+    /**
+     * Pages naming this owner.
+     */
+    sources: Array<TestScrapeOwnerSource>;
+};
+
+export type TestScrapeResponse = {
+    phone: string;
+    /**
+     * The Google query run; null when nothing was found.
+     */
+    query: string | null;
+    /**
+     * Pages fetched successfully out of the top 10 results.
+     */
+    pagesChecked: number;
+    /**
+     * Possible owners, most-corroborated first. Empty when none were found.
+     */
+    owners: Array<TestScrapeOwner>;
+};
+
 export type GenerateReportRequest = {
     /**
      * Phone number in E.164
@@ -751,6 +805,56 @@ export type ReverseReport = {
     warnings: Array<string>;
 };
 
+export type WebOwnerSource = {
+    url: string;
+    /**
+     * Quote from the page linking the owner to the number.
+     */
+    evidence: string;
+};
+
+export type WebOwner = {
+    name: string;
+    type: 'person' | 'business';
+    location: string | null;
+    /**
+     * Highest confidence any page gave.
+     */
+    confidence: 'high' | 'medium' | 'low';
+    /**
+     * Possible postal addresses.
+     */
+    addresses: Array<string>;
+    /**
+     * Possible email addresses.
+     */
+    emails: Array<string>;
+    /**
+     * Possible relatives / household members (names).
+     */
+    relatives: Array<string>;
+    /**
+     * Pages naming this owner.
+     */
+    sources: Array<WebOwnerSource>;
+};
+
+export type WebOwnersReport = {
+    phone: string;
+    /**
+     * The Google query run.
+     */
+    query: string;
+    /**
+     * Pages fetched successfully out of the top 10 results.
+     */
+    pagesChecked: number;
+    /**
+     * Possible owners, most-corroborated first.
+     */
+    owners: Array<WebOwner>;
+};
+
 export type GetReportResponse = {
     reportId: string;
     phone: string;
@@ -770,6 +874,10 @@ export type GetReportResponse = {
     } | null;
     createdAt: string;
     reverseReport: ReverseReport | null;
+    /**
+     * Possible owners found on the web (non-US).
+     */
+    webOwners: WebOwnersReport | null;
 };
 
 export type AppControllerGetData = {
@@ -1154,6 +1262,19 @@ export type PlatformPublicControllerLookupPhoneResponses = {
 };
 
 export type PlatformPublicControllerLookupPhoneResponse = PlatformPublicControllerLookupPhoneResponses[keyof PlatformPublicControllerLookupPhoneResponses];
+
+export type PlatformPublicControllerTestScrapeData = {
+    body: TestScrapeRequest;
+    path?: never;
+    query?: never;
+    url: '/public-platform/test-scrape';
+};
+
+export type PlatformPublicControllerTestScrapeResponses = {
+    200: TestScrapeResponse;
+};
+
+export type PlatformPublicControllerTestScrapeResponse = PlatformPublicControllerTestScrapeResponses[keyof PlatformPublicControllerTestScrapeResponses];
 
 export type PlatformPrivateControllerGenerateReportData = {
     body: GenerateReportRequest;
