@@ -697,41 +697,6 @@ export type GenerateReportRequest = {
     phone: string;
 };
 
-export type GeneratedReportResponse = {
-    data: {
-        [key: string]: unknown;
-    };
-};
-
-export type ListReportItem = {
-    reportId: string;
-    phone: string;
-    /**
-     * ISO 3166-1 alpha-2 country code.
-     */
-    country: {
-        [key: string]: unknown;
-    } | null;
-    /**
-     * 0 - 100
-     */
-    riskScore: number;
-    ownerIdentified: boolean;
-    createdAt: string;
-};
-
-export type ListReportStatistics = {
-    total: number;
-    totalThisWeek: number;
-    totalHighRisk: number;
-};
-
-export type ListReportsResponse = {
-    recentLookups: Array<ListReportItem>;
-    stats: ListReportStatistics;
-    nextCursor: string | null;
-};
-
 export type ReverseReportLatLong = {
     latitude: number;
     longitude: number;
@@ -853,6 +818,79 @@ export type WebOwnersReport = {
      * Possible owners, most-corroborated first.
      */
     owners: Array<WebOwner>;
+};
+
+export type GeneratedReportResponse = {
+    id: string;
+    /**
+     * E.164
+     */
+    phone: string;
+    /**
+     * Caller name (Twilio CNAM or web owner).
+     */
+    caller_name: string | null;
+    /**
+     * CONSUMER or BUSINESS.
+     */
+    caller_type: string | null;
+    first_name: string | null;
+    last_name: string | null;
+    address: string | null;
+    /**
+     * Twilio Identity Match score (unused so far).
+     */
+    summary_score: number | null;
+    /**
+     * ISO 3166-1 alpha-2 country code.
+     */
+    country: string;
+    /**
+     * Twilio SMS pumping risk, 0 - 100.
+     */
+    risk_score: number;
+    /**
+     * Trestle reverse phone result (US).
+     */
+    reverse_report: ReverseReport | null;
+    /**
+     * Possible owners found on the web (non-US).
+     */
+    web_owners: WebOwnersReport | null;
+    /**
+     * line_type_records id.
+     */
+    line_type_id: string | null;
+    created_at: string;
+};
+
+export type ListReportItem = {
+    reportId: string;
+    phone: string;
+    /**
+     * ISO 3166-1 alpha-2 country code.
+     */
+    country: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * 0 - 100
+     */
+    riskScore: number;
+    ownerIdentified: boolean;
+    createdAt: string;
+};
+
+export type ListReportStatistics = {
+    total: number;
+    totalThisWeek: number;
+    totalHighRisk: number;
+};
+
+export type ListReportsResponse = {
+    recentLookups: Array<ListReportItem>;
+    stats: ListReportStatistics;
+    nextCursor: string | null;
 };
 
 export type GetReportResponse = {
