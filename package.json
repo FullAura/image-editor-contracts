@@ -1,6 +1,6 @@
 {
   "name": "@image-editor/contracts",
-  "version": "0.0.48",
+  "version": "0.0.49",
   "description": "Shared API request/response types for the Image Editor platform",
   "license": "UNLICENSED",
   "private": true,
