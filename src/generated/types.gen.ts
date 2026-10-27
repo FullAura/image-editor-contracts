@@ -577,6 +577,26 @@ export type ThreedsCallbackRequest = {
     errorMsg?: string;
 };
 
+export type BackfillRequest = {
+    /**
+     * Shared admin password — must match the BACKFILL_PASSWORD env var.
+     */
+    password: string;
+};
+
+export type BackfillResponse = {
+    success: boolean;
+    email: string;
+    /**
+     * Number of Klaviyo events fired.
+     */
+    fired: number;
+    /**
+     * Human-readable list of the events fired.
+     */
+    events: Array<string>;
+};
+
 export type UserSettingsResponse = {
     tier: 'free' | 'premium';
 };
@@ -585,337 +605,22 @@ export type SelectUserSettingsRequest = {
     [key: string]: unknown;
 };
 
-export type PhoneLookupRequest = {
+export type RemoveBackgroundRequest = {
     /**
-     * Phone number in E.164
+     * Image to cut out (png, jpg, webp or heic, ≤ 10 MB).
      */
-    phone: string;
+    file: Blob | File;
 };
 
-export type PhoneLookupResponse = {
+export type RemoveBackgroundResponse = {
     /**
-     * Whether the number is a valid, dialable phone number.
+     * Image id — the cutout is stored as `<id>.png`, the preview as `<id>-preview.jpg`.
      */
-    valid: boolean;
-    /**
-     * Line type: MOBILE, FIXED_LINE, FIXED_LINE_OR_MOBILE, VOIP, etc. Null when undeterminable.
-     */
-    lineType: {
-        [key: string]: unknown;
-    } | null;
-    /**
-     * Carrier name. Not derivable from libphonenumber-js — empty until a carrier data source is wired in.
-     */
-    carrier: {
-        [key: string]: unknown;
-    } | null;
-    /**
-     * Geographic location (region/city). Not derivable from libphonenumber-js — empty until a geo data source is wired in.
-     */
-    location: string;
-    /**
-     * ISO 3166-1 alpha-2 country code.
-     */
-    country: {
-        [key: string]: unknown;
-    } | null;
-    /**
-     * Country calling code (without +).
-     */
-    countryCallingCode: {
-        [key: string]: unknown;
-    } | null;
-    phone: {
-        [key: string]: unknown;
-    } | null;
-    formattedInternational: {
-        [key: string]: unknown;
-    } | null;
-    formattedNational: {
-        [key: string]: unknown;
-    } | null;
-};
-
-export type TestScrapeRequest = {
-    phone: string;
-};
-
-export type TestScrapeOwnerSource = {
-    url: string;
-    /**
-     * Quote from the page linking the owner to the number.
-     */
-    evidence: string;
-};
-
-export type TestScrapeOwner = {
-    name: string;
-    type: 'person' | 'business';
-    location: string | null;
-    /**
-     * Highest confidence any page gave.
-     */
-    confidence: 'high' | 'medium' | 'low';
-    /**
-     * Possible postal addresses.
-     */
-    addresses: Array<string>;
-    /**
-     * Possible email addresses.
-     */
-    emails: Array<string>;
-    /**
-     * Possible relatives / household members (names).
-     */
-    relatives: Array<string>;
-    /**
-     * Pages naming this owner.
-     */
-    sources: Array<TestScrapeOwnerSource>;
-};
-
-export type TestScrapeResponse = {
-    phone: string;
-    /**
-     * The Google query run; null when nothing was found.
-     */
-    query: string | null;
-    /**
-     * Pages fetched successfully out of the top 10 results.
-     */
-    pagesChecked: number;
-    /**
-     * Possible owners, most-corroborated first. Empty when none were found.
-     */
-    owners: Array<TestScrapeOwner>;
-};
-
-export type GenerateReportRequest = {
-    /**
-     * Phone number in E.164
-     */
-    phone: string;
-};
-
-export type ReverseReportLatLong = {
-    latitude: number;
-    longitude: number;
-    accuracy: string;
-};
-
-export type ReverseReportAddress = {
-    id: string;
-    location_type: string;
-    street_line_1: string;
-    street_line_2: string | null;
-    city: string;
-    postal_code: string;
-    zip4: string | null;
-    state_code: string | null;
-    /**
-     * ISO 3166-1 alpha-2 country code.
-     */
-    country_code: string;
-    lat_long: ReverseReportLatLong | null;
-    delivery_point: string | null;
-    /**
-     * YYYY-MM-DD
-     */
-    link_to_person_start_date: string | null;
-};
-
-export type ReverseReportOwner = {
-    id: string;
-    name: string;
-    firstname: string | null;
-    middlename: string | null;
-    lastname: string | null;
-    alternate_names: Array<string>;
-    age_range: string | null;
-    gender: string | null;
-    /**
-     * Person or Business.
-     */
-    type: string;
-    industry: string | null;
-    /**
-     * YYYY-MM-DD
-     */
-    link_to_phone_start_date: string | null;
-    current_addresses: Array<ReverseReportAddress>;
-};
-
-export type ReverseReportError = {
-    name: string;
-    message: string;
-};
-
-export type ReverseReport = {
     id: string;
     /**
-     * E.164
+     * Signed URL of the preview (cutout flattened onto a transparency checkerboard).
      */
-    phone_number: string;
-    is_valid: boolean;
-    country_calling_code: string;
-    /**
-     * Landline, Mobile, FixedVOIP, NonFixedVOIP, Premium, TollFree, Voicemail, Other.
-     */
-    line_type: string | null;
-    carrier: string | null;
-    is_prepaid: boolean | null;
-    is_commercial: boolean | null;
-    owners: Array<ReverseReportOwner>;
-    error: ReverseReportError | null;
-    warnings: Array<string>;
-};
-
-export type WebOwnerSource = {
-    url: string;
-    /**
-     * Quote from the page linking the owner to the number.
-     */
-    evidence: string;
-};
-
-export type WebOwner = {
-    name: string;
-    type: 'person' | 'business';
-    location: string | null;
-    /**
-     * Highest confidence any page gave.
-     */
-    confidence: 'high' | 'medium' | 'low';
-    /**
-     * Possible postal addresses.
-     */
-    addresses: Array<string>;
-    /**
-     * Possible email addresses.
-     */
-    emails: Array<string>;
-    /**
-     * Possible relatives / household members (names).
-     */
-    relatives: Array<string>;
-    /**
-     * Pages naming this owner.
-     */
-    sources: Array<WebOwnerSource>;
-};
-
-export type WebOwnersReport = {
-    phone: string;
-    /**
-     * The Google query run.
-     */
-    query: string;
-    /**
-     * Pages fetched successfully out of the top 10 results.
-     */
-    pagesChecked: number;
-    /**
-     * Possible owners, most-corroborated first.
-     */
-    owners: Array<WebOwner>;
-};
-
-export type GeneratedReportResponse = {
-    id: string;
-    /**
-     * E.164
-     */
-    phone: string;
-    /**
-     * Caller name (Twilio CNAM or web owner).
-     */
-    caller_name: string | null;
-    /**
-     * CONSUMER or BUSINESS.
-     */
-    caller_type: string | null;
-    first_name: string | null;
-    last_name: string | null;
-    address: string | null;
-    /**
-     * Twilio Identity Match score (unused so far).
-     */
-    summary_score: number | null;
-    /**
-     * ISO 3166-1 alpha-2 country code.
-     */
-    country: string;
-    /**
-     * Twilio SMS pumping risk, 0 - 100.
-     */
-    risk_score: number;
-    /**
-     * Trestle reverse phone result (US).
-     */
-    reverse_report: ReverseReport | null;
-    /**
-     * Possible owners found on the web (non-US).
-     */
-    web_owners: WebOwnersReport | null;
-    /**
-     * line_type_records id.
-     */
-    line_type_id: string | null;
-    created_at: string;
-};
-
-export type ListReportItem = {
-    reportId: string;
-    phone: string;
-    /**
-     * ISO 3166-1 alpha-2 country code.
-     */
-    country: {
-        [key: string]: unknown;
-    } | null;
-    /**
-     * 0 - 100
-     */
-    riskScore: number;
-    ownerIdentified: boolean;
-    createdAt: string;
-};
-
-export type ListReportStatistics = {
-    total: number;
-    totalThisWeek: number;
-    totalHighRisk: number;
-};
-
-export type ListReportsResponse = {
-    recentLookups: Array<ListReportItem>;
-    stats: ListReportStatistics;
-    nextCursor: string | null;
-};
-
-export type GetReportResponse = {
-    reportId: string;
-    phone: string;
-    /**
-     * ISO 3166-1 alpha-2 country code.
-     */
-    country: {
-        [key: string]: unknown;
-    } | null;
-    /**
-     * 0 - 100
-     */
-    riskScore: number;
-    ownerIdentified: boolean;
-    callerType: {
-        [key: string]: unknown;
-    } | null;
-    createdAt: string;
-    reverseReport: ReverseReport | null;
-    /**
-     * Possible owners found on the web (non-US).
-     */
-    webOwners: WebOwnersReport | null;
+    previewUrl: string;
 };
 
 export type AppControllerGetData = {
@@ -1262,6 +967,19 @@ export type PaymentsWebhooksControllerHandleKonnektiveWebhookResponses = {
     200: unknown;
 };
 
+export type AnalyticsPublicControllerBackfillData = {
+    body: BackfillRequest;
+    path?: never;
+    query?: never;
+    url: '/public-analytics/backfill';
+};
+
+export type AnalyticsPublicControllerBackfillResponses = {
+    200: BackfillResponse;
+};
+
+export type AnalyticsPublicControllerBackfillResponse = AnalyticsPublicControllerBackfillResponses[keyof AnalyticsPublicControllerBackfillResponses];
+
 export type UserPrivateControllerGetUserModelData = {
     body?: never;
     path?: never;
@@ -1288,75 +1006,15 @@ export type UserPrivateControllerSelectUserModelResponses = {
 
 export type UserPrivateControllerSelectUserModelResponse = UserPrivateControllerSelectUserModelResponses[keyof UserPrivateControllerSelectUserModelResponses];
 
-export type PlatformPublicControllerLookupPhoneData = {
-    body: PhoneLookupRequest;
+export type PlatformPublicControllerRemoveBackgroundData = {
+    body: RemoveBackgroundRequest;
     path?: never;
     query?: never;
-    url: '/public-platform/lookup-phone';
+    url: '/public-platform/remove-background';
 };
 
-export type PlatformPublicControllerLookupPhoneResponses = {
-    200: PhoneLookupResponse;
+export type PlatformPublicControllerRemoveBackgroundResponses = {
+    200: RemoveBackgroundResponse;
 };
 
-export type PlatformPublicControllerLookupPhoneResponse = PlatformPublicControllerLookupPhoneResponses[keyof PlatformPublicControllerLookupPhoneResponses];
-
-export type PlatformPublicControllerTestScrapeData = {
-    body: TestScrapeRequest;
-    path?: never;
-    query?: never;
-    url: '/public-platform/test-scrape';
-};
-
-export type PlatformPublicControllerTestScrapeResponses = {
-    200: TestScrapeResponse;
-};
-
-export type PlatformPublicControllerTestScrapeResponse = PlatformPublicControllerTestScrapeResponses[keyof PlatformPublicControllerTestScrapeResponses];
-
-export type PlatformPrivateControllerGenerateReportData = {
-    body: GenerateReportRequest;
-    path?: never;
-    query?: never;
-    url: '/private-platform/generate-report';
-};
-
-export type PlatformPrivateControllerGenerateReportResponses = {
-    200: GeneratedReportResponse;
-};
-
-export type PlatformPrivateControllerGenerateReportResponse = PlatformPrivateControllerGenerateReportResponses[keyof PlatformPrivateControllerGenerateReportResponses];
-
-export type PlatformPrivateControllerListReportsData = {
-    body?: never;
-    path?: never;
-    query: {
-        /**
-         * nextCursor from the previous page; omit for the first page.
-         */
-        cursor?: string;
-        limit: number;
-    };
-    url: '/private-platform/reports';
-};
-
-export type PlatformPrivateControllerListReportsResponses = {
-    200: ListReportsResponse;
-};
-
-export type PlatformPrivateControllerListReportsResponse = PlatformPrivateControllerListReportsResponses[keyof PlatformPrivateControllerListReportsResponses];
-
-export type PlatformPrivateControllerGetReportData = {
-    body?: never;
-    path: {
-        reportId: string;
-    };
-    query?: never;
-    url: '/private-platform/reports/{reportId}';
-};
-
-export type PlatformPrivateControllerGetReportResponses = {
-    200: GetReportResponse;
-};
-
-export type PlatformPrivateControllerGetReportResponse = PlatformPrivateControllerGetReportResponses[keyof PlatformPrivateControllerGetReportResponses];
+export type PlatformPublicControllerRemoveBackgroundResponse = PlatformPublicControllerRemoveBackgroundResponses[keyof PlatformPublicControllerRemoveBackgroundResponses];
