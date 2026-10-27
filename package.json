@@ -1,7 +1,7 @@
 {
-  "name": "@verity-check/contracts",
+  "name": "@image-editor/contracts",
   "version": "0.0.48",
-  "description": "Shared API request/response types for the Verity Check platform",
+  "description": "Shared API request/response types for the Image Editor platform",
   "license": "UNLICENSED",
   "private": true,
   "type": "module",

@@ -1,6 +1,6 @@
-# @verity-check/contracts
+# @image-editor/contracts
 
-Shared, framework-free TypeScript types for the Verity Check API. These mirror the request/response DTOs of `
+Shared, framework-free TypeScript types for the Image Editor API. These mirror the request/response DTOs of `
 -api` **without** any `@nestjs/swagger` / `class-validator` runtime dependencies, so the frontend can import them safely.
 
 ## Install (private git)
